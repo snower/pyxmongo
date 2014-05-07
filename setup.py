@@ -1,4 +1,7 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
+#14-4-18
+# create by: snower
 from setuptools import setup
 
 
