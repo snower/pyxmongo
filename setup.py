@@ -8,7 +8,7 @@ from setuptools import setup
 setup(
     name='pyxmongo',
     version='0.0.1',
-    packages=['pyxmongo'],
+    packages=['pyxmongo','pyxmongo.slices'],
     package_data={
         '': ['README.md'],
     },

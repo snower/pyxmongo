@@ -40,4 +40,4 @@ class Slice(object):
 Slice.register("")(Slice)
 for file in os.listdir(os.path.dirname(__file__)):
     if file.endswith("slice.py"):
-        __import__("xmongo.slices",globals(),locals(),[file[:-3]])
+        __import__("pyxmongo.slices",globals(),locals(),[file[:-3]])

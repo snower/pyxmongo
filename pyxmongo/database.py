@@ -15,8 +15,6 @@ class Database(BaseObject):
         self.__slice=self.__init_slice()
         self.__databases={}
 
-        self.load_info()
-
     @property
     def connection(self):
         return self.__connection
@@ -47,6 +45,7 @@ class Database(BaseObject):
                     self.__databases[db].append(conn[db])
 
     def select(self,name=None):
+        self.load_info()
         if isinstance(name,basestring):
             return self.__databases[name]
         return self.__databases

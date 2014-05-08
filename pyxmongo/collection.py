@@ -15,8 +15,6 @@ class Collection(BaseObject):
         self.__slice=self.__init_slice()
         self.__collections={}
 
-        self.load_info()
-
     @property
     def database(self):
         return self.__database
@@ -39,11 +37,8 @@ class Collection(BaseObject):
         return rets
 
     def __run_command_all(self,cmd,*args,**kwargs):
-        self.__database.load_info()
-        self.load_info()
-
         rets=[]
-        for name,collections in self.__collections.iteritems():
+        for name,collections in self.select().iteritems():
             for collection in collections:
                 rets.append(getattr(collection,cmd)(*args,**kwargs))
         return rets
@@ -59,6 +54,7 @@ class Collection(BaseObject):
                         self.__collections[collection].append(db[collection])
 
     def select(self,name=None):
+        self.load_info()
         if name:
             return self.__collections[name]
         return self.__collections
