@@ -36,8 +36,9 @@ class Cursor(object):
         self.__limit=-1
         self.__skip=-1
         self.__sort=None
-        self._iter=None
-        self._loaded=False
+        self.__iter=None
+        self.__index=0
+        self.__loaded=False
 
     def limit(self,count):
         self.__limit=count
@@ -118,31 +119,29 @@ class Cursor(object):
         return self
 
     def next(self):
-        if not self._loaded:
+        if not self.__loaded:
             self._sort()
             self._skip()
             self._limit()
-            self._loaded=True
+            self.__loaded=True
 
-        if self._iter is None:
-            index=0
-            def _iter():
-                global index
+        if self.__iter is None:
+            self.__index=0
+            def iter():
                 if len(self.__cursors)==1:
                     for data in self.__cursors[0]:
                         yield data
                 else:
                     datas=sorted([data for data in [CursorData(cursor) for cursor in self.__cursors] if data.data is not None],self._cmp)
                     data=self.get_current_data(datas)
-                    while (self.__limit==-1 or index<self.__limit) and data and data.data:
-                        if self.__skip==-1 or index>=self.__skip:
+                    while (self.__limit==-1 or self.__index<self.__limit) and data and data.data:
+                        if self.__skip==-1 or self.__index>=self.__skip:
                             yield data.data
-                        index+=1
+                        self.__index+=1
                         data.next()
                         data=self.get_current_data(datas)
-            self._iter=_iter
-        self._iter()
-        raise StopIteration
+            self.__iter=iter()
+        return self.__iter.next()
 
     def count(self):
         count=0
@@ -153,7 +152,7 @@ class Cursor(object):
     def rewind(self):
         for cursor in self.__cursors:
             cursor.rewind()
-        self._iter=None
+        self.__iter=None
 
     def close(self):
         for cursor in self.__cursors:
