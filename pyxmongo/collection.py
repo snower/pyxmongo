@@ -67,7 +67,7 @@ class Collection(BaseObject):
 
     def insert(self,datas):
         if isinstance(datas,dict):
-            return self.__run_command(datas,"insert",datas)
+            return self.__run_command(datas,"insert",datas)[0]
         else:
             collections={}
             slice_datas={}
@@ -82,16 +82,16 @@ class Collection(BaseObject):
             for key in collections:
                 conn,db_name,collection_name=collections[key]
                 collection=conn[db_name][collection_name]
-                rets.append((collection,collection.insert(slice_datas[key])))
+                rets.extend(collection.insert(slice_datas[key]))
             return rets
 
     def save(self,to_save,*args,**kwargs):
         if not isinstance(to_save, dict):
             raise TypeError("cannot save object of type %s" % type(to_save))
-        return self.__run_command(to_save,"save",to_save,*args,**kwargs)
+        return self.__run_command(to_save,"save",to_save,*args,**kwargs)[0]
 
     def update(self,spec,*args,**kwargs):
-        return self.__run_command(spec,"update",spec,*args,**kwargs)
+        return self.__run_command(spec,"update",spec,*args,**kwargs)[0]
 
     def drop(self,*args,**kwargs):
         self.__run_command_all("drop",*args,**kwargs)
