@@ -11,5 +11,9 @@ from xmongo_client import MongoClient
 
 def Connection(config_or_host,*args,**kwargs):
     if isinstance(config_or_host,dict):
-        return connection.Connection(config_or_host)
+        if "hosts" in config_or_host:
+            return connection.Connection(config_or_host)
+        else:
+            kwargs.update(config_or_host)
+            pymongo.Connection(*args,**kwargs)
     return pymongo.Connection(config_or_host,*args,**kwargs)
