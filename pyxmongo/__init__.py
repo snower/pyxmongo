@@ -15,5 +15,5 @@ def Connection(config_or_host,*args,**kwargs):
             return connection.Connection(config_or_host)
         else:
             kwargs.update(config_or_host)
-            pymongo.Connection(*args,**kwargs)
+            return pymongo.Connection(*args,**kwargs)
     return pymongo.Connection(config_or_host,*args,**kwargs)
