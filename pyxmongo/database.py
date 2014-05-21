@@ -58,7 +58,7 @@ class Database(BaseObject):
 
     def command(self,*args,**kwargs):
         rets=[]
-        for name,databases in self.__databases.iteritems():
+        for name,databases in self.select().iteritems():
             for database in databases:
                 rets.append(database.command(*args,**kwargs))
         return rets
@@ -74,24 +74,24 @@ class Database(BaseObject):
                 collection.database.drop_collection(name)
 
     def add_user(self,*args,**kwargs):
-        for name,databases in self.__databases.iteritems():
+        for name,databases in self.select().iteritems():
             for database in databases:
                 database.add_user(*args,**kwargs)
 
     def remove_user(self, *args,**kwargs):
-        for name,databases in self.__databases.iteritems():
+        for name,databases in self.select().iteritems():
             for database in databases:
                 database.remove_user(*args,**kwargs)
 
     def authenticate(self,*args,**kwargs):
         succed=True
-        for name,databases in self.__databases.iteritems():
+        for name,databases in self.select().iteritems():
             for database in databases:
                 succed=succed and database.authenticate(*args,**kwargs)
         return succed
 
     def logout(self,*args,**kwargs):
-        for name,databases in self.__databases.iteritems():
+        for name,databases in self.select().iteritems():
             for database in databases:
                 database.logout(*args,**kwargs)
 

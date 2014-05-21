@@ -96,6 +96,9 @@ class Collection(BaseObject):
     def drop(self,*args,**kwargs):
         self.__run_command_all("drop",*args,**kwargs)
 
+    def find_and_modify(self, query={},*args,**kwargs):
+        return self.__run_command(query,"find_and_modify",query,*args,**kwargs)[0]
+
     def find(self,spec_or_id=None,*args,**kwargs):
         if spec_or_id is not None and not isinstance(spec_or_id,dict):
             spec_or_id={"_id":spec_or_id}
