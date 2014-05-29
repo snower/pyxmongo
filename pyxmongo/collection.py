@@ -2,16 +2,26 @@
 #14-4-18
 # create by: snower
 
+from pymongo.connection import Connection as PyConnection
+from pymongo.collection import *
 from common import BaseObject
 from slices import Slice
 from cursor import Cursor
 
 class Collection(BaseObject):
-    def __init__(self,name,database,config):
+    def __new__(cls, database,*args, **kwargs):
+        from database import Database
+        if isinstance(database,Database):
+            return object.__new__(cls,database,*args, **kwargs)
+        collection=object.__new__(PyConnection,database,*args, **kwargs)
+        collection.__init__(database,*args, **kwargs)
+        return collection
+
+    def __init__(self,database,name):
         super(Collection,self).__init__()
         self.__name=name
         self.__database=database
-        self.__config=config
+        self.__config=database.get_config(name)
         self.__slice=self.__init_slice()
         self.__collections={}
 
@@ -148,3 +158,29 @@ class Collection(BaseObject):
 
     def reindex(self):
         self.__run_command_all("reindex")
+
+    def rename(self,name,new_name):
+        collection=self.select(name)
+        if collection:
+            return collection.rename(name,new_name)
+
+    def group(self,*args,**kwargs):
+        return True
+
+    def distinct(self,*args,**kwargs):
+        return True
+
+    def inline_map_reduce(self,*args,**kwargs):
+        return True
+
+    def map_reduce(self,*args,**kwargs):
+        return True
+
+    def aggregate(self,*args,**kwargs):
+        return True
+
+    def parallel_scan(self,*args,**kwargs):
+        return True
+
+    def options(self,*args,**kwargs):
+        return True

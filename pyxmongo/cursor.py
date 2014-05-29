@@ -3,6 +3,16 @@
 # create by: snower
 
 import math
+from pymongo.cursor import *
+
+_QUERY_OPTIONS = {
+    "tailable_cursor": 2,
+    "slave_okay": 4,
+    "oplog_replay": 8,
+    "no_timeout": 16,
+    "await_data": 32,
+    "exhaust": 64,
+    "partial": 128}
 
 class CursorData(object):
     def __init__(self,cursor,data=None):
@@ -157,3 +167,55 @@ class Cursor(object):
     def close(self):
         for cursor in self.__cursors:
             cursor.close()
+
+    def _refresh(self,*args,**kwargs):
+        return True
+
+    def batch_size(self,*args,**kwargs):
+        return True
+
+    def comment(self,*args,**kwargs):
+        return True
+
+    def max_scan(self,*args,**kwargs):
+        return True
+
+    def remove_option(self,*args,**kwargs):
+        return True
+
+    def max(self,*args,**kwargs):
+        return True
+
+    def hint(self,*args,**kwargs):
+        return True
+
+    def distinct(self,*args,**kwargs):
+        return True
+
+    def explain(self,*args,**kwargs):
+        return True
+
+    def min(self,*args,**kwargs):
+        return True
+
+    def add_option(self,*args,**kwargs):
+        return True
+
+    def where(self,*args,**kwargs):
+        return True
+
+    def _Cursor__die(self,*args,**kwargs):
+        return True
+
+    def max_time_ms(self,*args,**kwargs):
+        return True
+
+    @property
+    def _Cursor__data(self):
+        data=[]
+        for i in range(100):
+            try:
+                data.append(self.next())
+            except StopIteration:
+                break
+        return deque(data)

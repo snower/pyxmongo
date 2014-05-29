@@ -2,16 +2,26 @@
 #14-4-18
 # create by: snower
 
+from pymongo.database import Database as PyDatabase
+from pymongo.database import *
 from common import BaseObject
 from slices import Slice
 from collection import Collection
 
 class Database(BaseObject):
-    def __init__(self,name,connection,config):
+    def __new__(cls, connection,*args, **kwargs):
+        from mongo_client import MongoClient
+        if isinstance(connection,MongoClient):
+            return object.__new__(cls,connection,*args, **kwargs)
+        database=object.__new__(PyDatabase,connection,*args, **kwargs)
+        database.__init__(connection,*args, **kwargs)
+        return database
+
+    def __init__(self,connection,name):
         super(Database,self).__init__()
         self.__name=name
         self.__connection=connection
-        self.__config=config
+        self.__config=connection.get_config(name)
         self.__slice=self.__init_slice()
         self.__databases={}
 
@@ -32,8 +42,11 @@ class Database(BaseObject):
 
     def __get_collection(self,name):
         if name in self.__config["collections"]:
-            return Collection(name,self,self.__config["collections"][name])
+            return Collection(self,name)
         return None
+
+    def get_config(self,name):
+        return self.__config["collections"][name]
 
     def load_info(self):
         self.__databases={}
@@ -61,6 +74,66 @@ class Database(BaseObject):
         for name,databases in self.select().iteritems():
             for database in databases:
                 rets.append(database.command(*args,**kwargs))
+        return rets
+
+    def eval(self,*args,**kwargs):
+        rets=[]
+        for name,databases in self.select().iteritems():
+            for database in databases:
+                rets.append(database.eval(*args,**kwargs))
+        return rets
+
+    def validate_collection(self,*args,**kwargs):
+        rets=[]
+        for name,databases in self.select().iteritems():
+            for database in databases:
+                rets.append(database.validate_collection(*args,**kwargs))
+        return rets
+
+    def create_collection(self,*args,**kwargs):
+        return True
+
+    def previous_error(self,*args,**kwargs):
+        return True
+
+    def dereference(self,*args,**kwargs):
+        return True
+
+    def profiling_level(self,*args,**kwargs):
+        return True
+
+    def last_status(self,*args,**kwargs):
+        return True
+
+    def current_op(self,*args,**kwargs):
+        return True
+
+    def set_profiling_level(self,*args,**kwargs):
+        rets=[]
+        for name,databases in self.select().iteritems():
+            for database in databases:
+                rets.append(database.set_profiling_level(*args,**kwargs))
+        return rets
+
+    def profiling_info(self,*args,**kwargs):
+        rets=[]
+        for name,databases in self.select().iteritems():
+            for database in databases:
+                rets.append(database.profiling_info(*args,**kwargs))
+        return rets
+
+    def error(self,*args,**kwargs):
+        rets=[]
+        for name,databases in self.select().iteritems():
+            for database in databases:
+                rets.append(database.error(*args,**kwargs))
+        return rets
+
+    def reset_error_history(self,*args,**kwargs):
+        rets=[]
+        for name,databases in self.select().iteritems():
+            for database in databases:
+                rets.append(database.reset_error_history(*args,**kwargs))
         return rets
 
     def collection_names(self):

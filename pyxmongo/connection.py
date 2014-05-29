@@ -2,7 +2,8 @@
 #14-4-18
 # create by: snower
 
-from xmongo_client import MongoClient
+from pymongo.connection import *
+from mongo_client import MongoClient
 
 class Connection(MongoClient):
     def __init__(self,config):

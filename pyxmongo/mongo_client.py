@@ -3,15 +3,29 @@
 # create by: snower
 
 import pymongo
+from pymongo.mongo_client import *
 from common import BaseObject
 from slices import Slice
 from database import Database
 
 class MongoClient(BaseObject):
-    def __init__(self,config):
+    def __new__(cls, config_or_host,*args,**kwargs):
+        if isinstance(config_or_host,dict):
+            if "hosts" in config_or_host:
+                return object.__new__(cls,config_or_host,*args,**kwargs)
+            else:
+                kwargs.update(config_or_host)
+        else:
+            kwargs["host"]=config_or_host
+        client=object.__new__(pymongo.Connection,*args,**kwargs)
+        client.__init__(*args,**kwargs)
+        return client
+
+    def __init__(self,config,**kwargs):
         super(MongoClient,self).__init__()
         self.__config=config
         self.__connections=[]
+        self.__kwargs=kwargs
         self.__slice=self.__init_slice()
 
         self.__connect()
@@ -25,12 +39,18 @@ class MongoClient(BaseObject):
 
     def __connect(self):
         for host in self.__config["hosts"]:
-            self.__connections.append(pymongo.Connection(**host))
+            config={}
+            config.update(host)
+            config.update(self.__kwargs)
+            self.__connections.append(pymongo.Connection(**config))
 
     def __get_database(self,name):
         if name in self.__config["databases"]:
-            return Database(name,self,self.__config["databases"][name])
+            return Database(self,name)
         return None
+
+    def get_config(self,name):
+        return self.__config["databases"][name]
 
     def select(self,index=None):
         if isinstance(index,int):
