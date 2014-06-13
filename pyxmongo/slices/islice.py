@@ -17,8 +17,11 @@ class Slice(BaseSlice):
 
     def select(self,data):
         if data is None or self.__key is None:return self.__names
-        if self.__key not in data or not isinstance(data[self.__key],int):return self.__names
-        return [self.format(data[self.__key] % self.__mod)]
+        if self.__key not in data:return self.__names
+        try:
+            return [self.format(data[self.__key] % self.__mod)]
+        except TypeError:
+            return self.__names
 
     def format(self,value):
         return self.__format % value
