@@ -101,7 +101,9 @@ class Cursor(object):
         while data.data is None:
             if not datas:return None
             data=datas.pop(0)
-        if not datas:return data
+        if not datas:
+            datas.append(data)
+            return data
 
         start,end,index=0,len(datas),0
         while end-start!=1:
